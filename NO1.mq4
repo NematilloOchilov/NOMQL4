@@ -4,7 +4,7 @@
 //| Bizni qo'llab-quvvatlash uchun Uzcard karta raqami        8600032937412948 |
 //+----------------------------------------------------------------------------+
 #property copyright "Nematillo Ochilov MQL4"
-#property link      "https://t.me/Nematillo_Ochilov"
+#property link      "https://t.me/MQLUZ"
 
 extern double    Lots=0.01;
 extern int       TakeProfit=1000;
