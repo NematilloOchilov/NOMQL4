@@ -65,7 +65,7 @@ int start()//                                                                   
 //|   shift - texnik ko'rsatgich tamponidan olingan qiymat indekslari (berilgan davrlarning oldingi  |
 //|   miqdoriga nisbatan siljish).                                                                   |
 //+--------------------------------------------------------------------------------------------------+
-  double narx=MarketInfo(Symbol(),MODE_BID); // hozirgi narx                                        |
+  double narx=MarketInfo(Symbol(),MODE_BID); // hozirgi narx                                         |
   double EMA=iMA(NULL,PERIOD_M15,Ma1Period,Ma1Shift,Ma1Method,Ma1AppliedPrice,0); //                 |
   double EMA60=iMA(NULL,PERIOD_H1,Ma1Period,Ma1Shift,Ma1Method,Ma1AppliedPrice,0); //                |
   double MACD_SIGNAL60=iMACD(NULL,PERIOD_H1,62,190,9,PRICE_CLOSE,MODE_SIGNAL,0);//                   |
@@ -115,13 +115,13 @@ int start()//                                                                   
   //else                                                                                             |
   if (OrdersTotal() < 1)//                                                                           |
     {//                                                                                              |
-     if ((EMA60 < narx) && (MACD_SIGNAL60 > 0)
-       && (narx > EMA) && (MACD_SIGNAL > 0) && (Stochastic > 80) && (RSI0 > 70))//|
+     if ((EMA60 < narx) && (MACD_SIGNAL60 > 0)//                                                     |
+       && (narx > EMA) && (MACD_SIGNAL > 0) && (Stochastic > 80) && (RSI0 > 70))//                   |
        {//                                                                                           |
         if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,3,slb,tpb,"NO savdo ",MagicNumber,0,Blue))//         |
           Print("OrderSend BUYda muammo: ", GetLastError());//                                       |
-     if ((EMA60 > narx) && (MACD_SIGNAL60 < 0)
-       && (narx < EMA) & (MACD_SIGNAL < 0) && (Stochastic < 20) && (RSI0 < 30))//|
+     if ((EMA60 > narx) && (MACD_SIGNAL60 < 0)//                                                     |
+       && (narx < EMA) & (MACD_SIGNAL < 0) && (Stochastic < 20) && (RSI0 < 30))//                    |
        {//                                                                                           |
         if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,3,sls,tps,"NO savdo ",MagicNumber,0,Red))//         |
           Print("OrderSend SELLda muammo: ", GetLastError());//                                      |
