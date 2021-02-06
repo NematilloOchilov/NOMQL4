@@ -1,0 +1,255 @@
+//+--------------------------------------------------------------------------------------------------+
+//|                                                                       Djamolliddin Boltayev.mq4  |
+//|                                                      Strategiya muallifi: Djamolliddin Boltayev  |
+//|                                                                    Dasturchi: NSMAtillo Ochilov  |
+//+--------------------------------------------------------------------------------------------------+
+#property copyright "NSMAtillo Ochilov MQL4"//                                                       |
+#property link      "https://t.me/MQLUZ"//                                                           |
+//+--------------------------------------------------------------------------------------------------+
+//|   Hajm, vaqt, savdo raqami, foyda va zararni cheklash miqdori.                                   |
+//+--------------------------------------------------------------------------------------------------+
+extern double    Lots=0.01;//                          Savdo hajmi                                   |
+extern int       Timeframe=15;//                       Savdo vaqti                                   |
+extern int       TakeProfit=100;//                     Daromadni belgilash                           |
+extern int       StopLoss=300;//                       Zararni cheklash                              |
+extern int       MagicNumber=1;//                      Savdo raqami                                  |
+//+--------------------------------------------------------------------------------------------------+
+//|   Moving Everage texnik ko'rsatgichining sozlamalari                                             |
+//+--------------------------------------------------------------------------------------------------+
+extern int       Ma1Period=190;//                                                                    |
+extern int       Ma1Shift=8;//                                                                       |
+extern int       Ma1Method=0;//                                                                      |
+extern int       Ma1AppliedPrice=0;//                                                                |
+//+--------------------------------------------------------------------------------------------------+
+//|   Oynada dastur ishga tushgani haqida bildirishnoma paydo bo'ladi                                |
+//+--------------------------------------------------------------------------------------------------+
+int init()//                                                                                         |
+  {//                                                                                                |
+   Alert("Nematillo Ochilov tomonidan yaratilgan robot ishga tushmoqda");//                          |
+   return(0);//                                                                                      |
+  }//                                                                                                |
+//+--------------------------------------------------------------------------------------------------+
+//|   Dasturning asosiy sozlamalari start() maxsus funksiyasi ichida bajariladi.                     |
+//+--------------------------------------------------------------------------------------------------+
+int start()//                                                                                        |
+  {   //                                                                                             |
+//+--------------------------------------------------------------------------------------------------+
+//|   NormalizeDouble - haqiqiy sonlarni belgilangan aniqlikka yaxlitlash.                           |
+//|   Digits - kasrdan keyingi raqamlar sonini qaytaradi.                                            |
+//+--------------------------------------------------------------------------------------------------+
+  double TP=NormalizeDouble(TakeProfit,Digits);//                                                    |
+  double SL=NormalizeDouble(StopLoss,Digits);//                                                      |
+//+--------------------------------------------------------------------------------------------------+
+//|   Foyda va zararni cheklash sozlamalari                                                          |
+//+--------------------------------------------------------------------------------------------------+
+  double slb=NormalizeDouble(Ask-SL*Point,Digits);//                                                 |
+  double sls=NormalizeDouble(Bid+SL*Point,Digits);//                                                 |
+  double tpb=NormalizeDouble(Ask+TP*Point,Digits);//                                                 |
+  double tps=NormalizeDouble(Bid-TP*Point,Digits);//                                                 |
+  double tslb=NormalizeDouble(OrderStopLoss()+300*Point,Digits);//                                   |
+  double tsls=NormalizeDouble(OrderStopLoss()-300*Point,Digits);//                                   |
+//+--------------------------------------------------------------------------------------------------+
+//|   Texnik ko'rsatgichlarning sozlamalari                                                          |
+//|   Ushbu veb sahifa(https://docs.mql4.com/indicators)da texnik ko'rsatgichlarning qanday sozlash  |
+//|   kerakligi haqida ko'rsatilgan.Moving Everage texnik ko'rsatgichidan MQL4 dasturlash tilida     |
+//|   qanday foydalanishni ko'rib chiqamiz.                                                          |
+//|   symbol - Valyuta jufligi nomi yoziladi (EURUSD yoki GBPUSD).Dastur oynadagi valyuta juftligida |
+//|   savdo qilishi uchun NULL yozish kifoya.                                                        |
+//|   timeframe - Savdo qilish vaqtiga daqiqalar(1, 5, 15, 60, 240,1440,10080, 43200)ni tanlash      |
+//|   yoki oynadagi vaqtni tanlsh uchun 0 yoziladi.                                                  |
+//|   https://docs.mql4.com/constants/chartconstants/enum_timeframes                                 |
+//|   ma_period - davr                                                                               |
+//|   ma_shift - surilish, ko'rsatkichlar qatorini almashtirish                                      |
+//|   ma_method - uslub (0 - Simple, 1 - Exponential, 2 - Smoothed, 3 - Linear weighted)             |
+//|   applied_price - narx holati (1-8)                                                              |
+//|   shift - texnik ko'rsatgich tamponidan olingan qiymat indekslari (berilgan davrlarning oldingi  |
+//|   miqdoriga nisbatan siljish).                                                                   |
+//+--------------------------------------------------------------------------------------------------+
+  double narx=MarketInfo(Symbol(),MODE_BID); // hozirgi narx                                      |
+  double SMA=iMA(NULL,0,Ma1Period,Ma1Shift,Ma1Method,Ma1AppliedPrice,0); //                 |
+  // double SMA60=iMA(NULL,PERIOD_H1,Ma1Period,Ma1Shift,Ma1Method,Ma1AppliedPrice,0); //                |
+  // double MACD_SIGNAL60=iMACD(NULL,PERIOD_H1,62,190,9,PRICE_CLOSE,MODE_SIGNAL,0);//                   |
+  double MACD_SIGNAL=iMACD(NULL,0,62,190,9,PRICE_CLOSE,MODE_SIGNAL,0);//                    |
+  double RSI_3_0=iRSI(NULL,0,3,PRICE_OPEN,0);//                                                |
+  double RSI_3_1=iRSI(NULL,0,3,PRICE_CLOSE,1);//                                              |
+  double RSI_3_2=iRSI(NULL,0,3,PRICE_CLOSE,2);//                                              |
+  double RSI_14_0=iRSI(NULL,0,14,PRICE_CLOSE,0);//                                              |
+  double RSI_14_1=iRSI(NULL,0,14,PRICE_CLOSE,1);//                                              |
+  double RSI_14_2=iRSI(NULL,0,14,PRICE_CLOSE,2);//                                              |
+  double Stochastic=iStochastic(NULL,0,5,3,3,MODE_SMA,0,MODE_MAIN,0);//                      |
+//+--------------------------------------------------------------------------------------------------+
+//|   Izoh                                                                                           |
+//+--------------------------------------------------------------------------------------------------+
+  Comment("Ushbu robotni katta real balansda sinab ko'rmang");//                                     |
+//+--------------------------------------------------------------------------------------------------+
+//|   Zararni kamaytirish qismi                                                                      |
+//+--------------------------------------------------------------------------------------------------+
+//                                                                                           |
+//+--------------------------------------------------------------------------------------------------+
+//|   Savdoni ochish, foyda va zararni cheklash qismi                                                |
+//+--------------------------------------------------------------------------------------------------+
+  //else                                                                                             |
+  if (OrdersTotal() < 1)//                                                                           |
+    {//                                                                                              |
+     if ((narx > SMA) && (MACD_SIGNAL > 0) && (RSI_3_0 < 30) && (RSI_14_0 < 35) && (RSI_14_0 > RSI_14_1 > RSI_14_2))//                    |
+       {//                                                                                           |
+        if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,3,slb,tpb,"NO savdo ",MagicNumber,0,Blue))//         |
+          Print("OrderSend BUYda muammo: ", GetLastError());//                                       |
+        }
+     if ((narx < SMA) && (MACD_SIGNAL < 0) && (RSI_3_0 > 70) && (RSI_14_0 > 65) && (RSI_14_0 < RSI_14_1 < RSI_14_2))//                    |
+       {//                                                                                           |
+        if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,3,sls,tps,"NO savdo ",MagicNumber,0,Red))//         |
+          Print("OrderSend SELLda muammo: ", GetLastError());//                                      |
+       }//                                                                                           |                                                                                     |
+    }//                                                                                              |
+  return(0);//                                                                                       |
+  }//                                                                                                |
+//+--------------------------------------------------------------------------------------------------+
+//|  Tugadi                                                                                          |
+//+--------------------------------------------------------------------------------------------------+
+
+//+--------------------------------------------------------------------------------------------------+
+//|                                                                       Djamolliddin Boltayev.mq4  |
+//|                                                      Strategiya muallifi: Djamolliddin Boltayev  |
+//|                                                                    Dasturchi: NSMAtillo Ochilov  |
+//+--------------------------------------------------------------------------------------------------+
+#property copyright "NSMAtillo Ochilov MQL4"//                                                       |
+#property link      "https://t.me/MQLUZ"//                                                           |
+//+--------------------------------------------------------------------------------------------------+
+//|   Hajm, vaqt, savdo raqami, foyda va zararni cheklash miqdori.                                   |
+//+--------------------------------------------------------------------------------------------------+
+extern double    Lots=0.01;//                          Savdo hajmi                                   |
+extern int       Timeframe=5;//                       Savdo vaqti                                   |
+extern int       TakeProfit=5000;//                     Daromadni belgilash                           |
+extern int       StopLoss=500;//                       Zararni cheklash                              |
+extern int       MagicNumber=1;//                      Savdo raqami                                  |
+//+--------------------------------------------------------------------------------------------------+
+//|   Moving Everage texnik ko'rsatgichining sozlamalari                                             |
+//+--------------------------------------------------------------------------------------------------+
+extern int       Ma1Period=500;//                                                                    |
+extern int       Ma1Shift=8;//                                                                       |
+extern int       Ma1Method=0;//                                                                      |
+extern int       Ma1AppliedPrice=0;//                                                                |
+//+--------------------------------------------------------------------------------------------------+
+//|   Oynada dastur ishga tushgani haqida bildirishnoma paydo bo'ladi                                |
+//+--------------------------------------------------------------------------------------------------+
+int init()//                                                                                         |
+  {//                                                                                                |
+   Alert("NSMAtillo Ochilov tomonidan yaratilgan robot ishga tushmoqda");//                          |
+   return(0);//                                                                                      |
+  }//                                                                                                |
+//+--------------------------------------------------------------------------------------------------+
+//|   Dasturning asosiy sozlamalari start() maxsus funksiyasi ichida bajariladi.                     |
+//+--------------------------------------------------------------------------------------------------+
+int start()//                                                                                        |
+  {   //                                                                                             |
+//+--------------------------------------------------------------------------------------------------+
+//|   NormalizeDouble - haqiqiy sonlarni belgilangan aniqlikka yaxlitlash.                           |
+//|   Digits - kasrdan keyingi raqamlar sonini qaytaradi.                                            |
+//+--------------------------------------------------------------------------------------------------+
+  double TP=NormalizeDouble(TakeProfit,Digits);//                                                    |
+  double SL=NormalizeDouble(StopLoss,Digits);//                                                      |
+//+--------------------------------------------------------------------------------------------------+
+//|   Foyda va zararni cheklash sozlamalari                                                          |
+//+--------------------------------------------------------------------------------------------------+
+  double slb=NormalizeDouble(Ask-SL*Point,Digits);//                                                 |
+  double sls=NormalizeDouble(Bid+SL*Point,Digits);//                                                 |
+  double tpb=NormalizeDouble(Ask+TP*Point,Digits);//                                                 |
+  double tps=NormalizeDouble(Bid-TP*Point,Digits);//                                                 |
+  double tslb=NormalizeDouble(OrderStopLoss()+400*Point,Digits);//                                   |
+  double tsls=NormalizeDouble(OrderStopLoss()-400*Point,Digits);//                                   |
+//+--------------------------------------------------------------------------------------------------+
+//|   Texnik ko'rsatgichlarning sozlamalari                                                          |
+//|   Ushbu veb sahifa(https://docs.mql4.com/indicators)da texnik ko'rsatgichlarning qanday sozlash  |
+//|   kerakligi haqida ko'rsatilgan.Moving Everage texnik ko'rsatgichidan MQL4 dasturlash tilida     |
+//|   qanday foydalanishni ko'rib chiqamiz.                                                          |
+//|   symbol - Valyuta jufligi nomi yoziladi (EURUSD yoki GBPUSD).Dastur oynadagi valyuta juftligida |
+//|   savdo qilishi uchun NULL yozish kifoya.                                                        |
+//|   timeframe - Savdo qilish vaqtiga daqiqalar(1, 5, 15, 60, 240,1440,10080, 43200)ni tanlash      |
+//|   yoki oynadagi vaqtni tanlsh uchun 0 yoziladi.                                                  |
+//|   https://docs.mql4.com/constants/chartconstants/enum_timeframes                                 |
+//|   ma_period - davr                                                                               |
+//|   ma_shift - surilish, ko'rsatkichlar qatorini almashtirish                                      |
+//|   ma_method - uslub (0 - Simple, 1 - Exponential, 2 - Smoothed, 3 - Linear weighted)             |
+//|   applied_price - narx holati (1-8)                                                              |
+//|   shift - texnik ko'rsatgich tamonidan olingan qiymat indekslari (berilgan davrlarning oldingi   |
+//|   miqdoriga nisbatan siljish).                                                                   |
+//+--------------------------------------------------------------------------------------------------+
+  double narx=MarketInfo(Symbol(),MODE_ASK); // hozirgi narx                                         |
+  //double narx=iMA(NULL,0,0,0,0,0,0); //                 |
+  double SMA=iMA(NULL,0,Ma1Period,Ma1Shift,Ma1Method,Ma1AppliedPrice,0); //                 |
+  //double MACD_SIGNAL=iMACD(NULL,0,62,190,9,PRICE_CLOSE,MODE_MAIN,0);//                    |
+  double RSI0=iRSI(NULL,0,6,PRICE_CLOSE,0);//                                                |
+  double RSI1=iRSI(NULL,0,6,PRICE_CLOSE,1);//                                              |
+  double RSI2=iRSI(NULL,0,6,PRICE_CLOSE,2);//                                              |
+  double Stochastic=iStochastic(NULL,0,3,1,6,MODE_SMA,0,MODE_MAIN,0);//                      |
+  double OPB=NormalizeDouble(OrderOpenPrice()+200*Point,Digits);
+  double OPS=NormalizeDouble(OrderOpenPrice()-200*Point,Digits);
+  //int OP;
+  //double WPR0=iWPR(NULL,0,500,0);
+  //double WPR1=iWPR(NULL,0,500,1);
+//+--------------------------------------------------------------------------------------------------+
+//|   Izoh                                                                                           |
+//+--------------------------------------------------------------------------------------------------+
+  Comment("Ushbu robotni katta real balansda sinab ko'rmang");//                                     |
+//+--------------------------------------------------------------------------------------------------+
+//|   Zararni kamaytirish qismi                                                                      |
+//+--------------------------------------------------------------------------------------------------+
+  if(OrdersTotal() > 0)
+    {//Print("narx", narx);
+     //Print("sma",SMA);
+     for(int i=0;i<OrdersTotal();i++)
+      {
+       if(OrderSelect(i,SELECT_BY_POS)==true)
+         {
+         if(OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber)
+           {
+            if (OrderType()==OP_BUY)
+              {
+               if ((Stochastic > 70) && (RSI1 > 79) && (RSI0 < 79))
+                 {
+                  if (!OrderClose(OrderTicket(),OrderLots(),Bid,3,Green))
+                     Print("OrderClose BUYda muammo: ",GetLastError());
+                  return(0);
+                 }
+              }
+            if (OrderType()==OP_SELL)
+              {
+              if ((Stochastic < 30) && (RSI1 < 21) && (RSI0 > 21))
+                {
+                 if (!OrderClose(OrderTicket(),OrderLots(),Ask,3,Red))
+                    Print("OrderClose SELLda muammo: ",GetLastError());
+                 return(0);
+                }
+              }
+           }
+         }
+       }
+    }
+//+--------------------------------------------------------------------------------------------------+
+//|   Savdoni ochish, foyda va zararni cheklash qismi                                                |
+//+--------------------------------------------------------------------------------------------------+
+  else//if (OrdersTotal() < 1)
+    {
+     if (narx > SMA)
+       {
+       if ((Stochastic < 30) && (RSI1 < 31) && (RSI0 > 31))
+         {
+          if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,3,slb,tpb,"NO savdo ",MagicNumber,0,Blue))
+            Print("OrderSend BUYda muammo: ", GetLastError());
+         }
+       }
+     if (narx < SMA)
+       {
+        if ((Stochastic > 70) && (RSI1 > 69) && (RSI0 < 69))
+          {
+           if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,3,sls,tps,"NO savdo ",MagicNumber,0,Red))
+             Print("OrderSend SELLda muammo: ", GetLastError());
+          }
+       }
+     }
+  return(0);//                                                                                       |
+  }//                                                                                                |
+//+--------------------------------------------------------------------------------------------------+
+//|  Tugadi                                                                                          |
+//+--------------------------------------------------------------------------------------------------+
