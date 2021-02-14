@@ -1,6 +1,6 @@
 //+--------------------------------------------------------------------------------------------------+
-//|                                                                       Djamolliddin Boltayev.mq4  |
-//|                                                      Strategiya muallifi: Djamolliddin Boltayev  |
+//|                                                                                        NO10.mq4  |
+//|                                                          Strategiya muallifi: Nematillo Ochilov  |
 //|                                                                    Dasturchi: Nematillo Ochilov  |
 //+--------------------------------------------------------------------------------------------------+
 #property copyright "Nematillo Ochilov MQL4"//                                                       |
