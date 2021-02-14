@@ -24,6 +24,9 @@ int init()//                                                                    
 //+--------------------------------------------------------------------------------------------------+
 //|   Dasturning asosiy sozlamalari start() maxsus funksiyasi ichida bajariladi.                     |
 //+--------------------------------------------------------------------------------------------------+
+double buy;
+double sell;
+int hl = 0;
 int start()//                                                                                        |
   {   //                                                                                             |
 //+--------------------------------------------------------------------------------------------------+
@@ -32,7 +35,6 @@ int start()//                                                                   
 //+--------------------------------------------------------------------------------------------------+
   //Print(AccountBalance());
   double Lots=0.01;
-  //if (AccountBalance() > 500) {Lots=AccountBalance() / 2000;}
   double TP=NormalizeDouble(TakeProfit,Digits);//                                                    |
   double SL=NormalizeDouble(StopLoss,Digits);//                                                      |
 //+--------------------------------------------------------------------------------------------------+
@@ -44,17 +46,7 @@ int start()//                                                                   
   double tps=NormalizeDouble(Bid-TP*Point,Digits);//                                                 |
   double tslb=NormalizeDouble(OrderStopLoss()+400*Point,Digits);//                                   |
   double tsls=NormalizeDouble(OrderStopLoss()-400*Point,Digits);//                                   |
-
   double narx=MarketInfo(Symbol(),MODE_BID); // hozirgi narx                                         |
-  //double EMA_62=iMA(NULL,0,62,190,1,0,0); //                 |
-  //double WPR0=iWPR(NULL,0,1200,0);
-  //double WPR1=iWPR(NULL,0,1200,1);
-  //double MACD_SIGNAL60=iMACD(NULL,0,62,190,9,PRICE_CLOSE,MODE_SIGNAL,0);//                   |
-  //double MACD_SIGNAL=iMACD(NULL,0,62,190,9,PRICE_CLOSE,MODE_SIGNAL,0);//                    |
-  //double RSI0=iRSI(NULL,0,14,PRICE_OPEN,0);//                                                |
-  //double RSI1=iRSI(NULL,0,14,PRICE_CLOSE,1);//                                              |
-  //double RSI2=iRSI(NULL,0,14,PRICE_CLOSE,2);//                                              |
-  //double Stochastic=iStochastic(NULL,0,5,3,3,MODE_SMA,0,MODE_MAIN,0);//                      |
 //+--------------------------------------------------------------------------------------------------+
 //|   Izoh                                                                                           |
 //+--------------------------------------------------------------------------------------------------+
@@ -65,83 +57,28 @@ int start()//                                                                   
 //+--------------------------------------------------------------------------------------------------+
 //|   Savdoni ochish, foyda va zararni cheklash qismi                                                |
 //+--------------------------------------------------------------------------------------------------+
-   //Print(iOpen(Symbol(), 0, 12));
-            //Print(High[iHighest(Symbol(), 0, MODE_HIGH, 12, 0)] + NormalizeDouble(0.0010,Digits));
-         //Print(Low[iLowest (Symbol(), 0, MODE_LOW, 12, 0)] - NormalizeDouble(0.0012,Digits));
-   int hl = 0;
-   int day = 0;
-   //double buy;
-   //double sell;
+   int day = 0;// && day != TimeDay(TimeCurrent())
    int th = TimeHour(TimeCurrent());
-   //Print("TimeHour ", TimeHour(TimeCurrent()));
-   if (OrdersTotal() < 1)
-     {//Print("1 ", hl);
-      if (TimeHour(TimeCurrent()) == 2 && hl == 0 && day != TimeDay(TimeCurrent())) //  && day != TimeDay(TimeCurrent())
-        {//Print("2 ", hl);
-         double buy = High[iHighest(Symbol(), 0, MODE_HIGH, 13, 1)];// + NormalizeDouble(0.0002,Digits)
-         double sell = Low[iLowest (Symbol(), 0, MODE_LOW, 13, 1)];//
-         hl = 1;
-         //Print("buy ", buy);Print("sell ", sell);Print("narx ", narx);Print("hl ", hl);
-        }
-      if (hl == 1 && day != TimeDay(TimeCurrent()))
+   if (hl == 0 && TimeHour(TimeCurrent()) == 2 && TimeMinute(TimeCurrent()) == 5 && OrdersTotal() < 1)
         {
-         //double obuy = High[iHighest(Symbol(), 0, MODE_HIGH, 1, 0)];// + NormalizeDouble(0.0010,Digits)
-         //double osell = Low[iLowest (Symbol(), 0, MODE_LOW, 1, 0)];// - NormalizeDouble(0.0010,Digits)
-         if (buy < narx)
-           {day = TimeDay(TimeCurrent());hl = 0;
-            if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,30,slb,tpb,"NO savdo ",MagicNumber,0,Blue))
-              Print("OrderSend BUYda muammo: ", GetLastError());
-           }
-         if (sell > narx)
-           {day = TimeDay(TimeCurrent());hl = 0;
-            if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,30,sls,tps,"NO savdo ",MagicNumber,0,Red))
-              Print("OrderSend SELLda muammo: ", GetLastError());
-           }
+         buy = High[iHighest(Symbol(), 0, MODE_HIGH, 13, 1)];// + NormalizeDouble(0.0002,Digits)
+         sell = Low[iLowest (Symbol(), 0, MODE_LOW, 13, 1)];//
+         hl = 1;
         }
-     }
+   if (hl == 1)
+    {
+     if (buy < iLow(Symbol(),0,0))
+       {hl = 0;
+        if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,30,slb,tpb,"NO savdo ",0,0,Blue))
+          Print("OrderSend BUYda muammo: ", GetLastError());
+       }
+     if (sell > iHigh(Symbol(),0,0))
+       {hl = 0;
+        if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,30,sls,tps,"NO savdo ",0,0,Red))
+          Print("OrderSend SELLda muammo: ", GetLastError());
+       }
+    }
 
-  //Print(iHighest(Symbol(), 0, MODE_HIGH, 10, 1));
-  /*if (Volume[0] == 1)//                                                                           |
-    {//Print(iRSIOnArray(ExtBuffer,1000,14,0));//                                                                                              |
-     if (EMA_10_2 < EMA_50_2 && EMA_10_1 > EMA_50_1)//|
-       {//                                                                                           |
-        if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,30,slb,tpb,"NO savdo ",MagicNumber,0,Blue))//         |
-          Print("OrderSend BUYda muammo: ", GetLastError());//                                       |
-       }
-     if (EMA_10_2 > EMA_50_2 && EMA_10_1 < EMA_50_1)//|
-       {//                                                                                           |
-        if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,30,sls,tps,"NO savdo ",MagicNumber,0,Red))//         |
-          Print("OrderSend SELLda muammo: ", GetLastError());//                                      |
-       }//                                                                                           |
-    }//                                                                                              |
-  if (OrdersTotal()>0)
-    {//
-     for(int i=0;i<OrdersTotal();i++)
-      {
-       if (OrderSelect(i,SELECT_BY_POS)==true)
-         {
-          if (OrderSymbol()==Symbol()&&OrderMagicNumber()==MagicNumber)
-            {
-             if (OrderType()==OP_BUY)
-               {
-                if ((WPR0 < -20) && (WPR1 > -20))
-                  {
-                  if (!OrderClose(OrderTicket(),OrderLots(),Bid,3,Green))
-                    Print("OrderClose BUYda muammo: ",GetLastError());
-                  }
-               }
-             if (OrderType()==OP_SELL)
-               {
-                if ((WPR0 > -80) && (WPR1 < -80))
-                  {
-                   if (!OrderClose(OrderTicket(),OrderLots(),Ask,3,Red))
-                     Print("OrderClose SELLda muammo: ",GetLastError());
-                  }
-               }
-            }
-         }
-       }
-    }*/
   return(0);//                                                                                       |
   }//                                                                                                |
 //+--------------------------------------------------------------------------------------------------+
