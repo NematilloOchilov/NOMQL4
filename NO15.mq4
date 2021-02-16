@@ -32,7 +32,7 @@ int start()//
             }
         if (CCI < -100) { // Agar CCI 100 dan kichik bo'lsa
             // Agar oxirgi shamchaning boshlagan qismi Bandsdan katta bo'lsa va tugallangan qismi Bandsdan kichik bo'lsa
-            if ((iOpen(Symbol(),0,0) > BandsM) && (iClose(Symbol(),0,0) < BandsM)) {
+            if ((iOpen(Symbol(),0,0) < BandsM) && (iClose(Symbol(),0,0) > BandsM)) {
                 int sell = OrderSend(Symbol(), OP_SELL, Lot, Bid, 3, Bid + SL, Bid - TP, "NO savdo ", 0, 0, Red);// Sotish
                 if (sell<0) {Print("OrderSend SELLda muammo: ",GetLastError());}
                 }
