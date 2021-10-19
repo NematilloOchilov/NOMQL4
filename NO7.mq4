@@ -1,12 +1,12 @@
 //+------------------------------------------------------------------+
-//|                                                         NO7.mq4  |
-//|                          Strategiya muallifi: Nematillo Ochilov  |
+//|                                                  BlackGhost.mq4  |
+//|                                 Strategiya muallifi: BlackGhost  |
 //|                                    Dasturchi: Nematillo Ochilov  |
 //+------------------------------------------------------------------+
 #property copyright "Nematillo Ochilov MQL4"
 #property link      "https://t.me/Nematillo_Ochilov"
 
-extern double    Lots=0.01;
+extern double    Lots=0.01;  // AccountBalance()/1000
 extern int       TakeProfit=10000;
 extern int       StopLoss=100;
 extern int       MagicNumber=1;
@@ -34,10 +34,12 @@ int start()
 // Stop-lossni hisoblash
   double slb=NormalizeDouble(Ask-SL*Point,Digits);
   double sls=NormalizeDouble(Bid+SL*Point,Digits);
+  double mslb=NormalizeDouble(Ask-NormalizeDouble(500,Digits)*Point,Digits);
+  double msls=NormalizeDouble(Bid+NormalizeDouble(500,Digits)*Point,Digits);
   double tpb=NormalizeDouble(Ask+TP*Point,Digits);
   double tps=NormalizeDouble(Bid-TP*Point,Digits);
-  double opb=NormalizeDouble(190,Digits);
-  double ops=NormalizeDouble(190,Digits);
+  double opb=NormalizeDouble(1000,Digits);  //190
+  double ops=NormalizeDouble(1000,Digits);
   double tslb=NormalizeDouble(OrderOpenPrice()+opb*Point,Digits);
   double tsls=NormalizeDouble(OrderOpenPrice()-ops*Point,Digits);
   double WPR0=iWPR(NULL,0,500,0);

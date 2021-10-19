@@ -67,12 +67,12 @@ int start()//                                                                   
         }
    if (hl == 1)
     {
-     if (buy < iLow(Symbol(),0,0))
+     if (buy < iLow(Symbol(),0,0) - 50 * Point)
        {hl = 0;
         if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,30,slb,tpb,"NO savdo ",0,0,Blue))
           Print("OrderSend BUYda muammo: ", GetLastError());
        }
-     if (sell > iHigh(Symbol(),0,0))
+     if (sell > iHigh(Symbol(),0,0) + 50 * Point)
        {hl = 0;
         if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,30,sls,tps,"NO savdo ",0,0,Red))
           Print("OrderSend SELLda muammo: ", GetLastError());

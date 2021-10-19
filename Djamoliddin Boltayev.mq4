@@ -1,6 +1,6 @@
 //+--------------------------------------------------------------------------------------------------+
-//|                                                                       Djamolliddin Boltayev.mq4  |
-//|                                                      Strategiya muallifi: Djamolliddin Boltayev  |
+//|                                                                           Nematillo Ochilov.mq4  |
+//|                                                          Strategiya muallifi: Nematillo Ochilov  |
 //|                                                                    Dasturchi: Nematillo Ochilov  |
 //+--------------------------------------------------------------------------------------------------+
 #property copyright "Nematillo Ochilov MQL4"//                                                       |
@@ -12,12 +12,12 @@ extern double    Lots=0.01;//                          Savdo hajmi              
 extern int       Timeframe=15;//                       Savdo vaqti                                   |
 extern int       TakeProfit=500;//                     Daromadni belgilash                           |
 extern int       StopLoss=200;//                       Zararni cheklash                              |
-extern int       MagicNumber=1;//                      Savdo raqami                                  |
+extern int       MagicNumber=0;//                      Savdo raqami                                  |
 //+--------------------------------------------------------------------------------------------------+
 //|   Moving Everage texnik ko'rsatgichining sozlamalari                                             |
 //+--------------------------------------------------------------------------------------------------+
 extern int       Ma1Period=190;//                                                                    |
-extern int       Ma1Shift=8;//                                                                       |
+extern int       Ma1Shift=62;//                                                                       |
 extern int       Ma1Method=1;//                                                                      |
 extern int       Ma1AppliedPrice=0;//                                                                |
 //+--------------------------------------------------------------------------------------------------+
@@ -65,11 +65,11 @@ int start()//                                                                   
 //|   shift - texnik ko'rsatgich tamponidan olingan qiymat indekslari (berilgan davrlarning oldingi  |
 //|   miqdoriga nisbatan siljish).                                                                   |
 //+--------------------------------------------------------------------------------------------------+
-  double narx=MarketInfo(Symbol(),MODE_BID); // hozirgi narx                                         |
+  double narx=MarketInfo(Symbol(),MODE_BID); // hozirgi narx                                        |
   double EMA=iMA(NULL,PERIOD_M15,Ma1Period,Ma1Shift,Ma1Method,Ma1AppliedPrice,0); //                 |
   double EMA60=iMA(NULL,PERIOD_H1,Ma1Period,Ma1Shift,Ma1Method,Ma1AppliedPrice,0); //                |
-  double MACD_SIGNAL60=iMACD(NULL,PERIOD_H1,62,190,9,PRICE_CLOSE,MODE_SIGNAL,0);//                   |
-  double MACD_SIGNAL=iMACD(NULL,PERIOD_M15,62,190,9,PRICE_CLOSE,MODE_SIGNAL,0);//                    |
+  double MACD_SIGNAL60=iMACD(NULL,PERIOD_H1,190,62,9,PRICE_CLOSE,MODE_SIGNAL,0);//                   |
+  double MACD_SIGNAL=iMACD(NULL,PERIOD_M15,190,62,9,PRICE_CLOSE,MODE_SIGNAL,0);//                    |
   double RSI0=iRSI(NULL,PERIOD_H1,14,PRICE_OPEN,0);//                                                |
   double RSI1=iRSI(NULL,PERIOD_M15,14,PRICE_CLOSE,1);//                                              |
   double RSI2=iRSI(NULL,PERIOD_M15,14,PRICE_CLOSE,2);//                                              |
@@ -115,13 +115,13 @@ int start()//                                                                   
   //else                                                                                             |
   if (OrdersTotal() < 1)//                                                                           |
     {//                                                                                              |
-     if ((EMA60 < narx) && (MACD_SIGNAL60 > 0)//                                                     |
-       && (narx > EMA) && (MACD_SIGNAL > 0) && (Stochastic > 80) && (RSI0 > 70))//                   |
+     if ((EMA60 < narx) && (MACD_SIGNAL60 > 0) && //(Stochastic > 80) && (RSI0 > 70) &&
+       (narx > EMA) && (MACD_SIGNAL > 0))//|
        {//                                                                                           |
         if (!OrderSend(Symbol(),OP_BUY,Lots,Ask,3,slb,tpb,"NO savdo ",MagicNumber,0,Blue))//         |
           Print("OrderSend BUYda muammo: ", GetLastError());//                                       |
-     if ((EMA60 > narx) && (MACD_SIGNAL60 < 0)//                                                     |
-       && (narx < EMA) & (MACD_SIGNAL < 0) && (Stochastic < 20) && (RSI0 < 30))//                    |
+     if ((EMA60 > narx) && (MACD_SIGNAL60 < 0) && //(Stochastic < 20) && (RSI0 < 30) &&
+        (narx < EMA) && (MACD_SIGNAL < 0))//|
        {//                                                                                           |
         if (!OrderSend(Symbol(),OP_SELL,Lots,Bid,3,sls,tps,"NO savdo ",MagicNumber,0,Red))//         |
           Print("OrderSend SELLda muammo: ", GetLastError());//                                      |

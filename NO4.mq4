@@ -1,10 +1,10 @@
-﻿//+---------------------------------------------------------------------------+
-//|                                                                    NO4.mq4 |
-//|                                                          Nematillo Ochilov |
-//| Bizni qo'llab-quvvatlash uchun Uzcard karta raqami        8600032937412948 |
-//+----------------------------------------------------------------------------+
+//+------------------------------------------------------------------+
+//|                                                   BlackGhost.mq4 |
+//|                                                Nematillo Ochilov |
+//|                                                Nematillo Ochilov |
+//+------------------------------------------------------------------+
 #property copyright "Nematillo Ochilov MQL4"
-#property link      "https://t.me/MQLUZ"
+#property link      "https://t.me/Nematillo_Ochilov"
 
 extern double    Lots=0.01;
 extern int       TakeProfit=5000;

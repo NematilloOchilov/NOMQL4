@@ -1,6 +1,6 @@
 //+------------------------------------------------------------------+
-//|                                                         NO8.mq4  |
-//|                          Strategiya muallifi: Nematillo Ochilov  |
+//|                                                  .mq4  |
+//|                                 Strategiya muallifi:   |
 //|                                    Dasturchi: Nematillo Ochilov  |
 //+------------------------------------------------------------------+
 #property copyright "Nematillo Ochilov MQL4"
@@ -53,6 +53,7 @@ int start()
   double TSL=OrderStopLoss();
 //-------------------------------------------------------------------+
 // savdo taktikasi
+// savdo taktikasi
 //-------------------------------------------------------------------+
 
   Comment("Ushbu robotni katta real balansda sinab ko'rmang");
@@ -99,7 +100,5 @@ int start()
     }
   return(0);
   }
-
-
 
 

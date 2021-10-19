@@ -1,9 +1,9 @@
 //+--------------------------------------------------------------------------------------------------+
 //|                                                                       Djamolliddin Boltayev.mq4  |
 //|                                                      Strategiya muallifi: Djamolliddin Boltayev  |
-//|                                                                    Dasturchi: Nematillo Ochilov  |
+//|                                                                    Dasturchi: NSMAtillo Ochilov  |
 //+--------------------------------------------------------------------------------------------------+
-#property copyright "Nematillo Ochilov MQL4"//                                                       |
+#property copyright "NSMAtillo Ochilov MQL4"//                                                       |
 #property link      "https://t.me/MQLUZ"//                                                           |
 //+--------------------------------------------------------------------------------------------------+
 //|   Hajm, vaqt, savdo raqami, foyda va zararni cheklash miqdori.                                   |
